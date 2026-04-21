@@ -4,22 +4,22 @@
 
 template<typename T, int N>
 class TStack {
-private:
+ private:
     T arr[N];
     int ptr;
-    
-public:
+
+ public:
     TStack() {
         ptr = -1;
     }
-    
+
     void push(T val) {
         if (ptr < N - 1) {
             ptr++;
             arr[ptr] = val;
         }
     }
-    
+
     T pop() {
         if (ptr >= 0) {
             ptr--;
@@ -27,17 +27,16 @@ public:
         }
         return T();
     }
-    
+
     T top() {
         if (ptr >= 0) {
             return arr[ptr];
         }
         return T();
     }
-    
+
     bool empty() {
         return ptr == -1;
     }
 };
-
 #endif  // INCLUDE_TSTACK_H_
