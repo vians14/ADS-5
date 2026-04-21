@@ -56,7 +56,7 @@ string infx2pstfx(const string& inf) {
     }
     
     if (out.length() > 0 && out[out.length() - 1] == ' ') {
-        out = out.substr(0, out.length() - 1);
+        out.pop_back();
     }
     
     return out;
@@ -108,4 +108,3 @@ int eval(const string& post) {
     
     return s.pop();
 }
-
