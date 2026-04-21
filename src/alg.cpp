@@ -2,9 +2,9 @@
 #include "alg.h"
 #include <string>
 #include <map>
-#include "tstack.h"
-#include <cctype>
 
+#include <cctype>
+#include "tstack.h"
 using std::string;
 
 int prior(char op) {
