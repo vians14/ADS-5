@@ -83,8 +83,7 @@ std::string infx2pstfx(const std::string& inf) {
     
     return result;
 }
-  return std::string("");
-}
+
 
 int eval(const std::string& pref) {
     TStack<int, 100> st;
