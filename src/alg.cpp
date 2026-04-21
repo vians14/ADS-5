@@ -129,5 +129,4 @@ int eval(const std::string& pref) {
     }
     
     return st.pop();
-  return 0;
 }
