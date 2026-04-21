@@ -3,130 +3,105 @@
 #include <map>
 #include "tstack.h"
 
-bool isOperator(char a) {
-    return a == '/' || a == '*' || a == '-' || a == '+';
-}
-
-
-int Precedence(char b) {
-    if (b == '+' || b == '-') return 1;
-    if (b == '*' || b == '/') return 2;
+int prior(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
     return 0;
 }
 
-
-int applyOperator(int a, int b, char c) {
-    switch (c) {
-        case '+': return a + b;
-        case '-': return a - b;
-        case '*': return a * b;
-        case '/': return a / b; 
-        default: throw std::invalid_argument("Invalid operator");
-    }
-}
-std::string infx2pstfx(const std::string& inf) {
-    TStack<char, 100> operators;
-    std::string result;
+string infx2pstfx(const string& inf) {
+    TStack<char, 100> st;
+    string out = "";
     
-    for (size_t i = 0; i < inf.length(); ++i) {
-        char c = inf[i];
+    for (int i = 0; i < inf.length(); i++) {
+        char ch = inf[i];
         
-       
-        if (isspace(c)) {
-            continue;
-        }
-        
-
-        if (isdigit(c)) {
-            while (i < inf.length() && isdigit(inf[i])) {
-                result += inf[i];
-                i++;
-            }
-            result += ' '; 
-            i--;  
-        }
-     
-        else if (c == '(') {
-            operators.push(c);
-        }
-    
-        else if (c == ')') {
-            while (!operators.isEmpty() && operators.top() != '(') {
-                result += operators.pop();
-                result += ' ';
-            }
-            if (!operators.isEmpty() && operators.top() == '(') {
-                operators.pop(); 
-            }
-        }
-
-        else if (isOperator(c)) {
-            while (!operators.isEmpty() && operators.top() != '(' && 
-                   Precedence(operators.top()) >= Precedence(c)) {
-                result += operators.pop();
-                result += ' ';
-            }
-            operators.push(c);
-        }
-    }
-    
-  
-    while (!operators.isEmpty()) {
-        result += operators.pop();
-        result += ' ';
-    }
-    
-
-    if (!result.empty() && result.back() == ' ') {
-        result.pop_back();
-    }
-    
-    return result;
-}
-
-
-int eval(const std::string& pref) {
-    TStack<int, 100> st;
-    
-    std::string num = "";
-    
-    for (int i = 0; i < post.length(); i++) {
-        char ch = post[i];
+        if (ch == ' ') continue;
         
         if (ch >= '0' && ch <= '9') {
-            num = num + ch;
-        }
-        
-        if (ch == ' ' && num != "") {
-            int val = 0;
-            for (int j = 0; j < num.length(); j++) {
-                val = val * 10 + (num[j] - '0');
+            while (i < inf.length() && inf[i] >= '0' && inf[i] <= '9') {
+                out = out + inf[i];
+                i++;
             }
-            st.push(val);
-            num = "";
+            out = out + ' ';
+            i--;
+        }
+        else if (ch == '(') {
+            st.push(ch);
+        }
+        else if (ch == ')') {
+            while (!st.empty() && st.top() != '(') {
+                out = out + st.pop();
+                out = out + ' ';
+            }
+            if (!st.empty() && st.top() == '(') {
+                st.pop();
+            }
+        }
+        else {
+            while (!st.empty() && st.top() != '(' && prior(st.top()) >= prior(ch)) {
+                out = out + st.pop();
+                out = out + ' ';
+            }
+            st.push(ch);
+        }
+    }
+    
+    while (!st.empty()) {
+        out = out + st.pop();
+        out = out + ' ';
+    }
+    
+    if (out.length() > 0 && out[out.length() - 1] == ' ') {
+        out = out.substr(0, out.length() - 1);
+    }
+    
+    return out;
+}
+
+int eval(const string& post) {
+    TStack<int, 100> s;
+    string tmp = "";
+    
+    for (int i = 0; i < post.size(); i++) {
+        char c = post[i];
+        
+        if (c >= '0' && c <= '9') {
+            tmp = tmp + c;
         }
         
-        if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
-            int b = st.pop();
-            int a = st.pop();
+        if (c == ' ') {
+            if (tmp != "") {
+                int x = 0;
+                for (int j = 0; j < tmp.length(); j++) {
+                    x = x * 10 + (tmp[j] - '0');
+                }
+                s.push(x);
+                tmp = "";
+            }
+        }
+        
+        if (c == '+' || c == '-' || c == '*' || c == '/') {
+            int b = s.pop();
+            int a = s.pop();
             
-            int res = 0;
-            if (ch == '+') res = a + b;
-            if (ch == '-') res = a - b;
-            if (ch == '*') res = a * b;
-            if (ch == '/') res = a / b;
+            int r;
+            if (c == '+') r = a + b;
+            if (c == '-') r = a - b;
+            if (c == '*') r = a * b;
+            if (c == '/') r = a / b;
             
-            st.push(res);
+            s.push(r);
         }
     }
     
-    if (num != "") {
-        int val = 0;
-        for (int j = 0; j < num.length(); j++) {
-            val = val * 10 + (num[j] - '0');
+    if (tmp != "") {
+        int x = 0;
+        for (int j = 0; j < tmp.length(); j++) {
+            x = x * 10 + (tmp[j] - '0');
         }
-        st.push(val);
+        s.push(x);
     }
     
-    return st.pop();
+    return s.pop();
 }
