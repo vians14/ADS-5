@@ -5,45 +5,39 @@
 template<typename T, int size>
 class TStack {
 private:
-    T data[N];
-    int topIndex;
+    T arr[N];
+    int ptr;
     
 public:
-    TStack() : topIndex(-1) {}
+    TStack() {
+        ptr = -1;
+    }
     
-    void push(const T& value) {
-        if (topIndex >= N - 1) {
-            throw std::overflow_error("Stack overflow");
+    void push(T val) {
+        if (ptr < N - 1) {
+            ptr++;
+            arr[ptr] = val;
         }
-        data[++topIndex] = value;
     }
     
     T pop() {
-        if (isEmpty()) {
-            throw std::underflow_error("Stack underflow");
+        if (ptr >= 0) {
+            ptr--;
+            return arr[ptr + 1];
         }
-        return data[topIndex--];
+        return T();
     }
     
-    T top() const {
-        if (isEmpty()) {
-            throw std::underflow_error("Stack is empty");
+    T top() {
+        if (ptr >= 0) {
+            return arr[ptr];
         }
-        return data[topIndex];
+        return T();
     }
     
-    bool isEmpty() const {
-        return topIndex == -1;
-    }
-    
-    int size() const {
-        return topIndex + 1;
-    }
-    
-    void clear() {
-        topIndex = -1;
+    bool empty() {
+        return ptr == -1;
     }
 };
-
 
 #endif  // INCLUDE_TSTACK_H_
