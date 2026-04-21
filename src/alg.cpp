@@ -2,6 +2,9 @@
 #include <string>
 #include <map>
 #include "tstack.h"
+#include <cctype>
+
+using namespace std;
 
 int prior(char op) {
     if (op == '+' || op == '-') return 1;
@@ -18,8 +21,8 @@ string infx2pstfx(const string& inf) {
         
         if (ch == ' ') continue;
         
-        if (ch >= '0' && ch <= '9') {
-            while (i < inf.length() && inf[i] >= '0' && inf[i] <= '9') {
+        if (isdigit(ch)) {
+            while (i < inf.length() && isdigit(inf[i])) {
                 out = out + inf[i];
                 i++;
             }
@@ -66,7 +69,7 @@ int eval(const string& post) {
     for (int i = 0; i < post.size(); i++) {
         char c = post[i];
         
-        if (c >= '0' && c <= '9') {
+        if (isdigit(c)) {
             tmp = tmp + c;
         }
         
@@ -105,3 +108,4 @@ int eval(const string& post) {
     
     return s.pop();
 }
+
